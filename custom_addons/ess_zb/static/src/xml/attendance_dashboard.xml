@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ess_zb.AttendanceDashboard">
+        <div class="o_attendance_dashboard p-4">
+            <div class="container">
+                <div class="card shadow">
+                    <div class="card-header bg-primary text-white">
+                        <h3 class="mb-0">
+                            <i class="fa fa-clock-o"/> Attendance Dashboard
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <!-- Employee Info -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h4>Welcome, <strong><t t-esc="state.employeeName"/></strong></h4>
+                            </div>
+                        </div>
+                        
+                        <!-- Status Display -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <div t-if="state.isCheckedIn" class="alert alert-success">
+                                    <h5><i class="fa fa-check-circle"/> Checked In</h5>
+                                    <p class="mb-0">
+                                        <strong>Check-in Time:</strong> <t t-esc="state.checkInTime"/>
+                                    </p>
+                                </div>
+                                <div t-else="" class="alert alert-info">
+                                    <h5><i class="fa fa-info-circle"/> Not Checked In</h5>
+                                    <p class="mb-0">Click the button below to check in with your location.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Action Buttons -->
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <button 
+                                    t-if="!state.isCheckedIn" 
+                                    class="btn btn-success btn-lg w-100"
+                                    t-on-click="checkIn"
+                                    t-att-disabled="state.loading">
+                                    <i class="fa fa-sign-in"/> Check In
+                                </button>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <button 
+                                    t-if="state.isCheckedIn" 
+                                    class="btn btn-danger btn-lg w-100"
+                                    t-on-click="checkOut"
+                                    t-att-disabled="state.loading">
+                                    <i class="fa fa-sign-out"/> Check Out
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Loading Indicator -->
+                        <div t-if="state.loading" class="row mt-3">
+                            <div class="col-12 text-center">
+                                <i class="fa fa-spinner fa-spin fa-3x text-primary"/>
+                                <p class="mt-2">Processing...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>
