@@ -10,8 +10,6 @@ Employee Self Attendance with Geolocation & Geofencing
 * Geofencing validation to ensure check-in within allowed areas
 * View attendance dashboard with real-time status
 * Track check-in and check-out locations using GPS coordinates
-* Auto-checkout after office hours
-* Timezone support
     """,
     'author': 'Zingbizz',
     'website': 'https://zingbizz.com',
@@ -22,13 +20,11 @@ Employee Self Attendance with Geolocation & Geofencing
         'security/ir.model.access.csv',
         'views/hr_attendance_views.xml',
         'views/attendance_dashboard.xml',
-        'data/ir_cron.xml',
     ],
     'assets': {
         'web.assets_backend': [
             'ess_zb/static/src/js/attendance_dashboard.js',
             'ess_zb/static/src/xml/attendance_dashboard.xml',
-            'ess_zb/static/src/css/attendance_dashboard.css',
         ],
     },
     'images': ['static/description/icon.png'],

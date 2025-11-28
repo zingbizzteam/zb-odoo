@@ -1,72 +1,98 @@
 <?xml version="1.0" encoding="utf-8"?>
-<templates>
-    <t t-name="ess_zb.AttendanceDashboard" owl="1">
-        <div class="o_attendance_dashboard">
-            <!-- Header -->
-            <div class="o_attendance_header">
-                <div class="o_attendance_welcome">
-                    <h2>Welcome, <t t-esc="state.employeeName"/></h2>
-                    <div class="o_current_time">
-                        <i class="fa fa-clock-o"/> <t t-esc="state.currentTime"/>
-                    </div>
-                </div>
-            </div>
+<odoo>
+    <!-- Client Action for Dashboard -->
+    <record id="action_attendance_dashboard" model="ir.actions.client">
+        <field name="name">My Attendance Dashboard</field>
+        <field name="tag">attendance_dashboard</field>
+    </record>
 
-            <!-- Status Card -->
-            <div class="o_attendance_status_card">
-                <div class="row">
-                    <div class="col-md-6">
-                        <div t-attf-class="o_status_indicator #{state.isCheckedIn ? 'o_checked_in' : 'o_checked_out'}">
-                            <i t-attf-class="fa #{state.isCheckedIn ? 'fa-check-circle' : 'fa-times-circle'}"/>
-                            <span t-if="state.isCheckedIn">Checked In</span>
-                            <span t-else="">Not Checked In</span>
-                        </div>
-                    </div>
-                    <div class="col-md-6" t-if="state.isCheckedIn">
-                        <div class="o_work_info">
-                            <div class="o_info_item">
-                                <span class="o_label">Check-in Time:</span>
-                                <span class="o_value"><t t-esc="state.checkInTime"/></span>
-                            </div>
-                            <div class="o_info_item">
-                                <span class="o_label">Hours Worked:</span>
-                                <span class="o_value"><t t-esc="formatWorkedHours()"/></span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <!-- Employee Attendance History List View -->
+    <record id="view_employee_attendance_list" model="ir.ui.view">
+        <field name="name">employee.attendance.list</field>
+        <field name="model">hr.attendance</field>
+        <field name="priority">1000</field>
+        <field name="arch" type="xml">
+            <list string="My Attendance History" create="0" delete="0" edit="0" export_xlsx="0">
+                <field name="check_in" string="Check In"/>
+                <field name="check_in_location" string="Check In Location" optional="show"/>
+                <field name="check_out" string="Check Out"/>
+                <field name="check_out_location" string="Check Out Location" optional="show"/>
+                <field name="worked_hours" string="Worked Hours" widget="float_time"/>
+            </list>
+        </field>
+    </record>
 
-            <!-- Action Buttons -->
-            <div class="o_attendance_actions">
-                <button
-                    t-if="!state.isCheckedIn"
-                    class="btn btn-primary btn-lg o_btn_check_in"
-                    t-on-click="checkIn"
-                    t-att-disabled="state.loading">
-                    <i class="fa fa-sign-in"/> 
-                    <span t-if="!state.loading">Check In</span>
-                    <span t-else="">Processing...</span>
-                </button>
+    <!-- Employee Attendance History Form View -->
+    <record id="view_employee_attendance_form" model="ir.ui.view">
+        <field name="name">employee.attendance.form</field>
+        <field name="model">hr.attendance</field>
+        <field name="priority">1000</field>
+        <field name="arch" type="xml">
+            <form string="Attendance Details" create="0" delete="0" edit="0">
+                <sheet>
+                    <group>
+                        <group string="Check In">
+                            <field name="check_in" readonly="1"/>
+                            <field name="check_in_latitude" readonly="1"/>
+                            <field name="check_in_longitude" readonly="1"/>
+                            <field name="check_in_location" readonly="1"/>
+                        </group>
+                        <group string="Check Out">
+                            <field name="check_out" readonly="1"/>
+                            <field name="check_out_latitude" readonly="1"/>
+                            <field name="check_out_longitude" readonly="1"/>
+                            <field name="check_out_location" readonly="1"/>
+                            <field name="worked_hours" readonly="1" widget="float_time"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
 
-                <button
-                    t-if="state.isCheckedIn"
-                    class="btn btn-danger btn-lg o_btn_check_out"
-                    t-on-click="checkOut"
-                    t-att-disabled="state.loading">
-                    <i class="fa fa-sign-out"/> 
-                    <span t-if="!state.loading">Check Out</span>
-                    <span t-else="">Processing...</span>
-                </button>
-            </div>
+    <!-- Action for Employee's Own Attendance History -->
+    <record id="action_employee_attendance_history" model="ir.actions.act_window">
+        <field name="name">My Attendance History</field>
+        <field name="res_model">hr.attendance</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_employee_attendance_list')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('view_employee_attendance_form')})]"/>
+        <field name="domain">[('employee_id.user_id', '=', uid)]</field>
+        <field name="context">{
+            'create': False,
+            'delete': False,
+            'edit': False,
+        }</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No attendance records yet
+            </p>
+            <p>
+                Your attendance history will appear here after you check in and out.
+            </p>
+        </field>
+    </record>
 
-            <!-- Info Card -->
-            <div class="o_attendance_info">
-                <div class="alert alert-info">
-                    <i class="fa fa-info-circle"/> 
-                    Location tracking is enabled. Please ensure GPS is turned on for accurate check-in/check-out.
-                </div>
-            </div>
-        </div>
-    </t>
-</templates>
+    <!-- Root Menu -->
+    <menuitem id="menu_my_attendance_root"
+        name="My Attendance"
+        web_icon="ess_zb,static/description/icon.png"
+        sequence="100"
+        
+        />
+    
+    <!-- Dashboard Menu -->
+    <menuitem id="menu_my_attendance_dashboard"
+        name="Dashboard"
+        parent="menu_my_attendance_root"
+        action="action_attendance_dashboard"
+        sequence="1"/>
+    
+    <!-- History Menu -->
+    <menuitem id="menu_employee_attendance_history"
+        name="My History"
+        parent="menu_my_attendance_root"
+        action="action_employee_attendance_history"
+        sequence="2"/>
+</odoo>

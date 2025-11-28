@@ -1,67 +1,293 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates xml:space="preserve">
     <t t-name="ess_zb.AttendanceDashboard">
-        <div class="o_attendance_dashboard p-4">
-            <div class="container">
-                <div class="card shadow">
-                    <div class="card-header bg-primary text-white">
-                        <h3 class="mb-0">
-                            <i class="fa fa-clock-o"/> Attendance Dashboard
-                        </h3>
+        <div class="o_attendance_dashboard">
+            <style>
+                .o_attendance_dashboard {
+                    max-width: 800px;
+                    margin: 0 auto;
+                    padding: 24px;
+                }
+                
+                .attendance-container {
+                    background: #ffffff;
+                    border-radius: 8px;
+                    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+                    overflow: hidden;
+                }
+                
+                .attendance-header {
+                    background: #04101f;
+                    color: white;
+                    padding: 20px 24px;
+                    border-bottom: 1px solid #e0e0e0;
+                }
+                
+                .attendance-header h3 {
+                    color: white;
+                    margin: 0;
+                    font-size: 20px;
+                    font-weight: 600;
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                }
+                
+                .attendance-body {
+                    padding: 32px 24px;
+                }
+                
+                .welcome-section {
+                    margin-bottom: 32px;
+                    padding-bottom: 24px;
+                    border-bottom: 1px solid #e0e0e0;
+                }
+                
+                .welcome-section h4 {
+                    font-size: 18px;
+                    color: #2c3e50;
+                    margin: 0;
+                    font-weight: 400;
+                }
+                
+                .welcome-section strong {
+                    font-weight: 600;
+                    color: #017e84;
+                }
+                
+                .status-card {
+                    border: 1px solid;
+                    border-radius: 6px;
+                    padding: 20px;
+                    margin-bottom: 32px;
+                }
+                
+                .status-card.checked-in {
+                    background: #f0f9ff;
+                    border-color: #0ea5e9;
+                    color: #075985;
+                }
+                
+                .status-card.checked-out {
+                    background: #fef3c7;
+                    border-color: #f59e0b;
+                    color: #92400e;
+                }
+                
+                .status-card h5 {
+                    font-size: 16px;
+                    font-weight: 600;
+                    margin: 0 0 12px 0;
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                }
+                
+                .status-card p {
+                    margin: 0;
+                    font-size: 14px;
+                    line-height: 1.5;
+                }
+                
+                .status-card .time-info {
+                    margin-top: 12px;
+                    padding-top: 12px;
+                    border-top: 1px solid currentColor;
+                    opacity: 0.8;
+                }
+                
+                .status-card .time-info strong {
+                    font-weight: 600;
+                }
+                
+                .status-card .time-value {
+                    display: block;
+                    font-size: 18px;
+                    font-weight: 600;
+                    margin-top: 4px;
+                }
+                
+                .action-buttons {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                    gap: 16px;
+                }
+                
+                .btn-attendance {
+                    padding: 16px 24px;
+                    font-size: 16px;
+                    font-weight: 600;
+                    border: none;
+                    border-radius: 6px;
+                    cursor: pointer;
+                    transition: all 0.2s ease;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 8px;
+                    width: 100%;
+                }
+                
+                .btn-attendance:disabled {
+                    opacity: 0.5;
+                    cursor: not-allowed;
+                }
+                
+                .btn-attendance:not(:disabled):hover {
+                    transform: translateY(-1px);
+                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                }
+                
+                .btn-attendance:not(:disabled):active {
+                    transform: translateY(0);
+                }
+                
+                .btn-check-in {
+                    background: #0ea5e9;
+                    color: white;
+                }
+                
+                .btn-check-in:hover:not(:disabled) {
+                    background: #0284c7;
+                }
+                
+                .btn-check-out {
+                    background: #dc2626;
+                    color: white;
+                }
+                
+                .btn-check-out:hover:not(:disabled) {
+                    background: #b91c1c;
+                }
+                
+                .loading-section {
+                    text-align: center;
+                    padding: 24px;
+                    margin-top: 16px;
+                    background: #f8fafc;
+                    border-radius: 6px;
+                }
+                
+                .loading-section .spinner {
+                    width: 48px;
+                    height: 48px;
+                    border: 4px solid #e2e8f0;
+                    border-top-color: #017e84;
+                    border-radius: 50%;
+                    animation: spin 0.8s linear infinite;
+                    margin: 0 auto 12px;
+                }
+                
+                @keyframes spin {
+                    to { transform: rotate(360deg); }
+                }
+                
+                .loading-section p {
+                    margin: 0;
+                    color: #64748b;
+                    font-size: 14px;
+                    font-weight: 500;
+                }
+                
+                /* Responsive Design */
+                @media (max-width: 768px) {
+                    .o_attendance_dashboard {
+                        padding: 16px;
+                    }
+                    
+                    .attendance-header {
+                        padding: 16px;
+                    }
+                    
+                    .attendance-header h3 {
+                        font-size: 18px;
+                    }
+                    
+                    .attendance-body {
+                        padding: 24px 16px;
+                    }
+                    
+                    .welcome-section h4 {
+                        font-size: 16px;
+                    }
+                    
+                    .status-card {
+                        padding: 16px;
+                    }
+                    
+                    .action-buttons {
+                        grid-template-columns: 1fr;
+                    }
+                    
+                    .btn-attendance {
+                        padding: 14px 20px;
+                        font-size: 15px;
+                    }
+                }
+            </style>
+            
+            <div class="attendance-container">
+                <div class="attendance-header">
+                    <h3>
+                        <i class="fa fa-clock-o"/>
+                        <span>Attendance Dashboard</span>
+                    </h3>
+                </div>
+                
+                <div class="attendance-body">
+                    <!-- Welcome Section -->
+                    <div class="welcome-section">
+                        <h4>Welcome, <strong><t t-esc="state.employeeName"/></strong></h4>
                     </div>
-                    <div class="card-body">
-                        <!-- Employee Info -->
-                        <div class="row mb-4">
-                            <div class="col-12">
-                                <h4>Welcome, <strong><t t-esc="state.employeeName"/></strong></h4>
+                    
+                    <!-- Status Display -->
+                    <div t-if="state.isCheckedIn" class="status-card checked-in">
+                        <h5>
+                            <i class="fa fa-check-circle"/>
+                            <span>Currently Checked In</span>
+                        </h5>
+                        <p>You are currently checked in. Don't forget to check out when you leave.</p>
+                        <div class="time-info" t-if="state.checkInTime">
+                            <div>
+                                <strong>Check-in Time:</strong>
+                                <span class="time-value"><t t-esc="state.checkInTime"/></span>
                             </div>
                         </div>
+                    </div>
+                    
+                    <div t-else="" class="status-card checked-out">
+                        <h5>
+                            <i class="fa fa-info-circle"/>
+                            <span>Not Checked In</span>
+                        </h5>
+                        <p>Click the check-in button below to start your attendance. Location access is required.</p>
+                    </div>
+                    
+                    <!-- Action Buttons -->
+                    <div class="action-buttons">
+                        <button 
+                            t-if="!state.isCheckedIn" 
+                            class="btn-attendance btn-check-in"
+                            t-on-click="checkIn"
+                            t-att-disabled="state.loading">
+                            <i class="fa fa-sign-in"/>
+                            <span>Check In</span>
+                        </button>
                         
-                        <!-- Status Display -->
-                        <div class="row mb-4">
-                            <div class="col-12">
-                                <div t-if="state.isCheckedIn" class="alert alert-success">
-                                    <h5><i class="fa fa-check-circle"/> Checked In</h5>
-                                    <p class="mb-0">
-                                        <strong>Check-in Time:</strong> <t t-esc="state.checkInTime"/>
-                                    </p>
-                                </div>
-                                <div t-else="" class="alert alert-info">
-                                    <h5><i class="fa fa-info-circle"/> Not Checked In</h5>
-                                    <p class="mb-0">Click the button below to check in with your location.</p>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Action Buttons -->
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <button 
-                                    t-if="!state.isCheckedIn" 
-                                    class="btn btn-success btn-lg w-100"
-                                    t-on-click="checkIn"
-                                    t-att-disabled="state.loading">
-                                    <i class="fa fa-sign-in"/> Check In
-                                </button>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <button 
-                                    t-if="state.isCheckedIn" 
-                                    class="btn btn-danger btn-lg w-100"
-                                    t-on-click="checkOut"
-                                    t-att-disabled="state.loading">
-                                    <i class="fa fa-sign-out"/> Check Out
-                                </button>
-                            </div>
-                        </div>
-                        
-                        <!-- Loading Indicator -->
-                        <div t-if="state.loading" class="row mt-3">
-                            <div class="col-12 text-center">
-                                <i class="fa fa-spinner fa-spin fa-3x text-primary"/>
-                                <p class="mt-2">Processing...</p>
-                            </div>
-                        </div>
+                        <button 
+                            t-if="state.isCheckedIn" 
+                            class="btn-attendance btn-check-out"
+                            t-on-click="checkOut"
+                            t-att-disabled="state.loading">
+                            <i class="fa fa-sign-out"/>
+                            <span>Check Out</span>
+                        </button>
+                    </div>
+                    
+                    <!-- Loading Indicator -->
+                    <div t-if="state.loading" class="loading-section">
+                        <div class="spinner"/>
+                        <p>Processing your request...</p>
                     </div>
                 </div>
             </div>
